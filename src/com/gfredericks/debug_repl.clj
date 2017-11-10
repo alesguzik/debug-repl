@@ -212,6 +212,7 @@
         (wrap-eval)
         (handler))))
 
+(declare global-debug!)
 (defn wrap-debug-repl
   [handler]
   ;; Test for NREPL-53 at startup
@@ -220,6 +221,7 @@
          (when (= ::bad-middleware-ordering (:type (ex-data e)))
            (report-nrepl-53-bug))))
 
+  (global-debug!)
   ;; having handle-debug as a separate function makes it easier to do
   ;; interactive development on this middleware
   (fn [msg] (handle-debug handler msg)))
@@ -237,3 +239,9 @@
   after unbreaking."
   [& body]
   `(try ~@body (catch Throwable ~'&ex (./break!) (throw ~'&ex))))
+
+(defn global-debug! []
+  (intern 'clojure.core 'break! @#'break!) (.setMacro (find-var 'clojure.core/break!))
+  (intern 'clojure.core 'unbreak! @#'unbreak!)
+  (intern 'clojure.core 'unbreak!! @#'unbreak!!)
+  (intern 'clojure.core 'catch-break! @#'catch-break!) (.setMacro (find-var 'clojure.core/catch-break!)))

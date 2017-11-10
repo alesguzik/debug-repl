@@ -17,11 +17,10 @@ Add the dependency and the middleware, e.g. in your `:user` profile:
     [com.gfredericks.debug-repl/wrap-debug-repl]}
 ```
 
-Then when you're ready to set breakpoints:
+Then when you're ready to set breakpoints (you may need to reload your
+namespaces or do `(use 'clojure.core :reload)` first):
 
 ``` clojure
-user> (require '[com.gfredericks.debug-repl :refer [break! unbreak!]])
-nil
 user> (let [x 41] (break!))
 Hijacking repl for breakpoint: unnamed
 user> (inc x)
